@@ -1,0 +1,80 @@
+_wandb:
+    value:
+        cli_version: 0.23.1
+        e:
+            r9n0xz7lu1bd9fasthb3keducpx74sxn:
+                args:
+                    - --epochs
+                    - "1"
+                    - --wandbkey
+                    - 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
+                codePath: src\models\train_model.py
+                codePathLocal: src\models\train_model.py
+                cpu_count: 4
+                cpu_count_logical: 4
+                cudaVersion: "11.7"
+                disk:
+                    /:
+                        total: "684720123904"
+                        used: "314671202304"
+                email: s232898@dtu.dk
+                executable: E:\miniconda\envs\translate_env\python.exe
+                git:
+                    commit: a1c2115c14d6fc055e894f9d4a3a020e66285bfe
+                    remote: https://github.com/Victor-Wei1001/mlops_project.git
+                gpu: NVIDIA GeForce 940MX
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Maxwell
+                      cudaCores: 384
+                      memoryTotal: "2147483648"
+                      name: NVIDIA GeForce 940MX
+                      uuid: GPU-82701d13-04c0-49e7-83b3-80797936b03b
+                host: DESKTOP-J25O287
+                memory:
+                    total: "12743712768"
+                os: Windows-10-10.0.19045-SP0
+                program: E:\machine learning\mlops_project\src\models\train_model.py
+                python: CPython 3.10.19
+                root: .
+                startedAt: "2026-01-09T03:10:45.267004Z"
+                writerId: r9n0xz7lu1bd9fasthb3keducpx74sxn
+        m:
+            - "1": trainer/global_step
+              "6":
+                - 3
+              "7": []
+            - "2": '*'
+              "5": 1
+              "6":
+                - 1
+              "7": []
+        python_version: 3.10.19
+        t:
+            "1":
+                - 1
+                - 9
+                - 11
+                - 41
+                - 49
+                - 103
+                - 105
+            "2":
+                - 1
+                - 9
+                - 11
+                - 41
+                - 49
+                - 103
+                - 105
+            "3":
+                - 7
+                - 13
+                - 66
+            "4": 3.10.19
+            "5": 0.23.1
+            "6": 4.57.3
+            "8":
+                - 3
+            "12": 0.23.1
+            "13": windows-amd64

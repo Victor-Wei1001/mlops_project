@@ -1,0 +1,13 @@
+# 训练与数据通用配置
+data:
+  k: 1000
+  dataset_name: "Helsinki-NLP/opus-100"
+  subset: "en-zh"
+  max_length: 128
+  output_dir: "data/processed"
+
+model:
+  model_name: "t5-small"
+  lr: 1e-4
+  batch_size: 4
+  epochs: 10

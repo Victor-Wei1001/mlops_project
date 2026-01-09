@@ -1,58 +1,63 @@
 import argparse
-import pytorch_lightning as pl
-import torch
-from torch.utils.data import DataLoader, TensorDataset
 import os
+import torch
+import pytorch_lightning as pl
+import wandb
+from torch.utils.data import DataLoader, TensorDataset
 from src.models.model import T5Model
-
+from pytorch_lightning.loggers import WandbLogger
 
 def train(args):
-    # 1. 种子设置 (Checklist M20: 可重复性)
+    
+    if args.wandbkey:
+        
+        wandb.login(key=args.wandbkey)
+        logger = WandbLogger(project="en-zh-translation", name="t5-training")
+    else:
+       
+        logger = False 
+
     pl.seed_everything(42)
 
-    # 2. 加载数据
+    # 加载数据
     data_path = "data/processed/train_data.pt"
     if not os.path.exists(data_path):
-        print("Error: train_data.pt not found!")
+        print(f"Error: {data_path} not found!")
         return
 
     data = torch.load(data_path)
     dataset = TensorDataset(data["input_ids"], data["attention_mask"], data["labels"])
+    train_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
 
-    # 模板中的 DataLoader 配置
-    train_loader = DataLoader(
-        dataset, batch_size=args.batch_size, shuffle=True, num_workers=0
-    )
-
-    # 3. 初始化模型 (传入 CLI 参数)
+    # 初始化模型
     model = T5Model(lr=args.lr, batch_size=args.batch_size)
 
-    # 4. 训练器设置 (对标模板的各种配置)
+    # --- 借鉴点 3: 性能分析 (M12) ---
     trainer = pl.Trainer(
         max_epochs=args.epochs,
         accelerator="auto",
         devices=1,
-        limit_train_batches=0.1 if args.debug_mode else 1.0,  # 模板中的 debug 模式
+        logger=logger,  # 使用上面定义的 logger
+        profiler="simple", # 顺便完成 M12 性能分析
+        limit_train_batches=0.1 if args.debug_mode else 1.0,
         precision="16-mixed" if torch.cuda.is_available() else 32,
     )
 
-    # 5. 开始训练
     trainer.fit(model, train_loader)
 
-    # 6. 保存最终权重 (Checklist M17)
+    # 保存模型
     os.makedirs("models", exist_ok=True)
     torch.save(model.state_dict(), "models/final_model.pt")
-    print("Training Done!")
-
+    print("Done!")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--lr", default=1e-4, type=float)
     parser.add_argument("--batch_size", default=8, type=int)
     parser.add_argument("--epochs", default=1, type=int)
-    parser.add_argument(
-        "--debug_mode", action="store_true", help="Run only 10% of data"
-    )
+    parser.add_argument("--debug_mode", action="store_true")
+    # 借鉴点 4: 通过命令行传入 Key
+    parser.add_argument("--wandbkey", default=None, type=str, help="W&B API key")
 
     args = parser.parse_args()
     train(args)
