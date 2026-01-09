@@ -87,3 +87,13 @@ target/
 
 # Mypy cache
 .mypy_cache/
+ 
+/models/*
+!/models/.gitkeep
+
+ 
+/lightning_logs/
+/outputs/
+/multirun/
+ 
+.pdm-python
