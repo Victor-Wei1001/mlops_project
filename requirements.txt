@@ -1,15 +1,12 @@
-# local package
--e .
  
-torch
+torch --index-url https://download.pytorch.org/whl/cpu
+
+ 
 pytorch-lightning
 transformers
 sentencepiece
-
- 
 pandas
 tqdm
 click
- 
 wandb
 hydra-core
