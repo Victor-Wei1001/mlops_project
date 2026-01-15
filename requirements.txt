@@ -10,3 +10,9 @@ tqdm
 click
 wandb
 hydra-core
+
+
+pytest
+pytest-cov
+coverage
+flake8
