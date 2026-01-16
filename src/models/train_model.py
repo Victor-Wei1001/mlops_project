@@ -7,15 +7,16 @@ from torch.utils.data import DataLoader, TensorDataset
 from src.models.model import T5Model
 from pytorch_lightning.loggers import WandbLogger
 
+
 def train(args):
-    
+
     if args.wandbkey:
-        
+
         wandb.login(key=args.wandbkey)
         logger = WandbLogger(project="en-zh-translation", name="t5-training")
     else:
-       
-        logger = False 
+
+        logger = False
 
     pl.seed_everything(42)
 
@@ -38,7 +39,7 @@ def train(args):
         accelerator="auto",
         devices=1,
         logger=logger,  # 使用上面定义的 logger
-        profiler="simple", # 顺便完成 M12 性能分析
+        profiler="simple",  # 顺便完成 M12 性能分析
         limit_train_batches=0.1 if args.debug_mode else 1.0,
         precision="16-mixed" if torch.cuda.is_available() else 32,
     )
@@ -49,6 +50,7 @@ def train(args):
     os.makedirs("models", exist_ok=True)
     torch.save(model.state_dict(), "models/final_model.pt")
     print("Done!")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
