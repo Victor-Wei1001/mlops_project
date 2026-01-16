@@ -1,7 +1,4 @@
- 
 torch --index-url https://download.pytorch.org/whl/cpu
-
- 
 pytorch-lightning
 transformers
 sentencepiece
@@ -10,9 +7,9 @@ tqdm
 click
 wandb
 hydra-core
-
-
 pytest
 pytest-cov
 coverage
-flake8
+flake8 
+pathspec==0.11.2
+dvc[gs]==3.33.4

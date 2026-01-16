@@ -1,0 +1,15 @@
+steps:
+  # 步骤 1: 构建预测镜像 (Predict Image)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', 
+      '-t', 'gcr.io/dtu-mlops-project-484513/predict:latest', 
+      '-f', 'predict.dockerfile', 
+      '.'
+    ]
+  # 步骤 2: 推送到镜像仓库
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/dtu-mlops-project-484513/predict:latest']
+
+images:
+  - 'gcr.io/dtu-mlops-project-484513/predict:latest'
