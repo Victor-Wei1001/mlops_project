@@ -7,13 +7,14 @@ from torch.utils.data import DataLoader, TensorDataset
 from src.models.model import T5Model
 from pytorch_lightning.loggers import WandbLogger
 
+
 def train(args):
     # --- DVC 检查逻辑优化 ---
     data_path = "data/processed/train_data.pt"
     if not os.path.exists(data_path):
         print("Warning: Data not found. If this is local, run 'dvc pull'.")
         # 云端时，cloudbuild.yaml 已经帮我们执行过 pull 了
-    
+
     # W&B 登录
     logger = False
     if args.wandbkey:
@@ -49,6 +50,7 @@ def train(args):
     # 同时保存 state_dict (用于预测) 和 checkpoint (用于恢复)
     torch.save(model.state_dict(), "models/final_model.pt")
     print(" Training Complete! Model saved to models/final_model.pt")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

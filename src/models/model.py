@@ -2,11 +2,12 @@ import pytorch_lightning as pl
 import torch
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
+
 class T5Model(pl.LightningModule):
     def __init__(self, lr: float = 1e-4, batch_size: int = 8):
         super().__init__()
-        self.save_hyperparameters() # 自动保存 lr 和 batch_size 到 self.hparams
-        
+        self.save_hyperparameters()  # 自动保存 lr 和 batch_size 到 self.hparams
+
         if lr <= 0:
             raise ValueError("Learning rate must be positive")
 
@@ -18,14 +19,10 @@ class T5Model(pl.LightningModule):
         self.t5 = T5ForConditionalGeneration.from_pretrained("t5-small")
 
     def forward(self, input_ids, attention_mask, labels=None):
-        return self.t5(
-            input_ids=input_ids, 
-            attention_mask=attention_mask, 
-            labels=labels
-        )
+        return self.t5(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
 
     def on_train_start(self):
-     
+
         self.t5.train()
 
     def _step(self, batch):

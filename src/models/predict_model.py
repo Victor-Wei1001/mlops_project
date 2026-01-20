@@ -3,10 +3,11 @@ import os
 from src.models.model import T5Model
 from transformers import T5Tokenizer
 
+
 def predict(text: str):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model_path = "models/final_model.pt"
-    
+
     if not os.path.exists(model_path):
         return f"Error: Weight file {model_path} not found."
 
@@ -33,6 +34,7 @@ def predict(text: str):
         translation = tokenizer.decode(generated_ids[0], skip_special_tokens=True)
 
     return translation
+
 
 if __name__ == "__main__":
     test_sentence = "This MLOps project is great."

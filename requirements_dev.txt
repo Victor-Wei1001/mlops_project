@@ -1,6 +1,8 @@
+
 -r requirements.txt
 pytest
 coverage
 flake8
 black
 ipykernel
+pytest-cov

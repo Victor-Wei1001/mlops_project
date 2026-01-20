@@ -114,7 +114,7 @@ will check the repositories and the code to verify your answers.
 ### Question 1
 > **Enter the group number you signed up on <learn.inside.dtu.dk>**
 >
-> Answer:
+> Answer: 64
 
 --- question 1 fill here ---
 
@@ -123,7 +123,7 @@ will check the repositories and the code to verify your answers.
 >
 > Example:
 >
-> *sXXXXXX, sXXXXXX, sXXXXXX*
+> *s232898, sXXXXXX, sXXXXXX*
 >
 > Answer:
 
