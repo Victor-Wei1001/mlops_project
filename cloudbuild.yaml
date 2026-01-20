@@ -1,10 +1,19 @@
 steps:
+  # 步骤 1: 构建镜像 (在这里强制不使用缓存)
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/dtu-mlops-project-484513/predict:latest', '-f', 'predict.dockerfile', '.']
+    args: [
+      'build', 
+      '--no-cache', 
+      '-t', 'gcr.io/dtu-mlops-project-484513/predict:latest', 
+      '-f', 'predict.dockerfile', 
+      '.'
+    ]
 
+  # 步骤 2: 推送镜像
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/dtu-mlops-project-484513/predict:latest']
 
+  # 步骤 3: 运行训练
   - name: 'gcr.io/dtu-mlops-project-484513/predict:latest'
     dir: '/app'
     entrypoint: 'sh'
@@ -14,19 +23,18 @@ steps:
     args:
       - '-c'
       - |
-        echo "--- 诊断：当前文件列表 ---"
-        ls -a /app
+        echo "--- [DEBUG] 源码内容审计 ---"
+        cat src/models/model.py
+        echo "--------------------------"
         
-        # 1. 禁用 SCM 检查
         dvc config core.no_scm true
-        
-        # 2. 使用你查到的正确名称 gcp_storage 绑定密钥
-        echo "--- 正在配置 DVC 远程: gcp_storage ---"
         dvc remote modify --local gcp_storage credentialpath /app/dtu-mlops-project-484513-db6b7e34022c.json
         
-        # 3. 执行拉取 (增加 -v 查看详细过程)
-        echo "--- 正在从 GCS 拉取数据 ---"
+        echo "--- [DEBUG] 正在拉取数据 ---"
         dvc pull -v
         
-        # 4. 运行训练
-        python src/models/train_model.py --epochs 1 --batch_size 4
+        echo "--- [DEBUG] 启动训练 ---"
+        python src/models/train_model.py --epochs 1 --batch_size 2 --debug_mode
+
+# 设置 2 小时超时
+timeout: '7200s'
