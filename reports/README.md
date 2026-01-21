@@ -343,8 +343,11 @@ Furthermore, we use Docker to containerize our entire environment (Python 3.11 a
 > *As seen in the second image we are also tracking ... and ...*
  
 > Answer:As seen in the first image, we tracked the train_loss during the model training process on GCP. The curve shows a significant drop from 0.7 to below 0.1, indicating that the T5 model successfully converged and learned the translation patterns.
+
 ![Training loss](figures/train_loss.png)
+
 As seen in the second image, we are also tracking the epoch progress. This confirms that our Cloud Build pipeline executed the full 5-epoch training schedule as configured, ensuring the model reached a stable state before the final weights were saved. Monitoring these metrics is vital for identifying potential training issues like overfitting or early stagnation in the cloud environment.
+
 ![Validation loss](figures/epoch.png)
 --- question 14 fill here ---
 
@@ -359,7 +362,10 @@ As seen in the second image, we are also tracking the epoch progress. This confi
 > *For our project we developed several images: one for training, inference and deployment. For example to run the*
 > *training docker image: `docker run trainer:latest lr=1e-3 batch_size=64`. Link to docker file: <weblink>*
 >
-> Answer:
+> Answer:In our project, we utilize Docker to ensure environment consistency across different stages of the ML lifecycle, from local development to cloud training and deployment. We developed a Dockerfile (e.g., predict.dockerfile) that encapsulates our entire software stack, including Python 3.11, PyTorch Lightning, and the Transformers library.
+Link to Dockerfile: https://github.com/Victor-Wei1001/mlops_project/blob/main/predict.dockerfile
+
+By containerizing our environment, we eliminate the "it works on my machine" problem, ensuring that the T5 model trains identically on GCP Cloud Build as it does locally. We use these images to run our training experiments on Google Cloud’s managed infrastructure, leveraging the built-in support for Docker containers in GCP。
 
 --- question 15 fill here ---
 
@@ -374,7 +380,7 @@ As seen in the second image, we are also tracking the epoch progress. This confi
 > *Debugging method was dependent on group member. Some just used ... and others used ... . We did a single profiling*
 > *run of our main code at some point that showed ...*
 >
-> Answer:
+> Answer:Our debugging followed a tiered strategy to ensure efficiency and cost-control. Locally, we implemented a --debug_mode flag in train_model.py that limits training to 10% of the data, allowing us to catch logical errors quickly before full-scale execution. For cloud runs, we relied on GCP Build logs and Weights & Biases (W&B) to identify training anomalies or hyperparameter issues in real-time.
 
 --- question 16 fill here ---
 
@@ -391,7 +397,13 @@ As seen in the second image, we are also tracking the epoch progress. This confi
 > Example:
 > *We used the following two services: Engine and Bucket. Engine is used for... and Bucket is used for...*
 >
-> Answer:
+> Answer:Buckets (Cloud Storage): We used buckets to store our processed datasets and model checkpoints, integrated via DVC for version control.
+
+Cloud Build: Used as our CI/CD engine to automate the building of Docker images and execute our training experiments in the cloud.
+
+Container Registry (GCR): Used to store and manage our versioned Docker images, such as the predict:latest image used for training.
+
+IAM & Service Accounts: Used to manage security permissions through JSON keys, allowing our build steps to pull data from storage buckets securely.
 
 --- question 17 fill here ---
 
@@ -405,7 +417,7 @@ As seen in the second image, we are also tracking the epoch progress. This confi
 > Example:
 > *We used the compute engine to run our ... . We used instances with the following hardware: ... and we started the*
 > *using a custom container: ...*
->
+>We utilized Compute Engine indirectly through Cloud Build's managed workers. Instead of manually provisioning persistent VMs, Cloud Build automatically spun up a temporary VM instance each time we triggered a training run.
 > Answer:
 
 --- question 18 fill here ---
@@ -448,7 +460,7 @@ As seen in the second image, we are also tracking the epoch progress. This confi
 > *We managed to train our model in the cloud using the Engine. We did this by ... . The reason we choose the Engine*
 > *was because ...*
 >
-> Answer:
+> Answer:We successfully trained our model in the cloud using Google Cloud Build as a serverless execution engine. The pipeline automated the environment setup using Docker images from GCR and retrieved versioned datasets from Google Cloud Storage via DVC. By securely passing our API key through Cloud Build substitutions, we monitored training progress in real-time on Weights & Biases, ensuring model convergence .
 
 --- question 22 fill here ---
 
@@ -577,7 +589,7 @@ As seen in the second image, we are also tracking the epoch progress. This confi
 > Example:
 > *The biggest challenges in the project was using ... tool to do ... . The reason for this was ...*
 >
-> Answer:
+> Answer:1.
 
 --- question 30 fill here ---
 
@@ -597,14 +609,4 @@ As seen in the second image, we are also tracking the epoch progress. This confi
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:
 
-fewafewubaofewnafioewnifowf ewafw afew afewafewafionewoanf waf ewonfieownaf fewnaiof newio fweanøf wea fewa
- fweafewa fewiagonwa ognwra'g
- wa
- gwreapig ipweroang w rag
- wa grwa
-  g
-  ew
-  gwea g
-  ew ag ioreabnguorwa bg̈́aw
-   wa
-   gew4igioera giroeahgi0wra gwa
+ Student s232898 contributed to the development of the project's machine learning pipeline by working on the T5-based translation model and implementing data processing scripts for the English-to-Chinese translation task. He helped set up the training workflow using PyTorch Lightning and developed scripts for data loading and preprocessing to support effective model training. In addition, he worked on the project infrastructure, including building Docker containers for training and inference, using DVC to manage dataset versioning on Google Cloud Storage, and configuring parts of the Google Cloud Build pipeline. He also integrated Weights & Biases to enable monitoring of training loss and system metrics during experiments.
