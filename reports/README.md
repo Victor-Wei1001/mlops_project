@@ -161,7 +161,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:We used pip and Docker for managing our dependencies and development environment. The list of core Python dependencies was auto-generated and maintained in a requirements.txt file, while development-only tools were kept in requirements_dev.txt. To ensure the same environment across different machines and our GCP training pipeline, we packaged the exact Python version (3.11) and all required libraries into a Docker image.
 
-
+```
 git clone https://github.com/Victor-Wei1001/mlops_project.git
 cd mlops_project 
 conda create -n dtu_mlops python=3.11 -y
@@ -171,7 +171,7 @@ pip install -r requirements_dev.txt
 export GOOGLE_APPLICATION_CREDENTIALS="dtu-mlops-project-484513-db6b7e34022c.json"
 dvc pull
 pip install -e .
-
+```
 
 
 --- question 4 fill here ---
@@ -341,14 +341,11 @@ Furthermore, we use Docker to containerize our entire environment (Python 3.11 a
 > Example:
 > *As seen in the first image when have tracked ... and ... which both inform us about ... in our experiments.*
 > *As seen in the second image we are also tracking ... and ...*
-><p align="center">
-  <img src="figures/train_loss.png" width="45%" />
-  <img src="figures/epoch.png" width="45%" />
-</p>
+ 
 > Answer:As seen in the first image, we tracked the train_loss during the model training process on GCP. The curve shows a significant drop from 0.7 to below 0.1, indicating that the T5 model successfully converged and learned the translation patterns.
-
+![Training loss](figures/train_loss.png)
 As seen in the second image, we are also tracking the epoch progress. This confirms that our Cloud Build pipeline executed the full 5-epoch training schedule as configured, ensuring the model reached a stable state before the final weights were saved. Monitoring these metrics is vital for identifying potential training issues like overfitting or early stagnation in the cloud environment.
-
+![Validation loss](figures/epoch.png)
 --- question 14 fill here ---
 
 ### Question 15
