@@ -123,9 +123,9 @@ will check the repositories and the code to verify your answers.
 >
 > Example:
 >
-> *s232898, sXXXXXX, sXXXXXX*
+> * sXXXXXX, sXXXXXX*
 >
-> Answer:
+> Answer:s232898
 
 --- question 2 fill here ---
 
@@ -139,7 +139,7 @@ will check the repositories and the code to verify your answers.
 > *We used the third-party framework ... in our project. We used functionality ... and functionality ... from the*
 > *package to do ... and ... in our project*.
 >
-> Answer:
+> Answer:We used the HuggingFace transformers library to make our project easier and more efficient. By loading the pre-trained t5-small model with T5ForConditionalGeneration, we could build an English-to-Chinese translation model using transfer learning, which saved time and computing resources. The T5Tokenizer helped us handle English and Chinese text automatically, including sub-word tokenization and vocabulary mapping, without extra implementation effort.
 
 --- question 3 fill here ---
 
@@ -159,7 +159,20 @@ will check the repositories and the code to verify your answers.
 > *We used ... for managing our dependencies. The list of dependencies was auto-generated using ... . To get a*
 > *complete copy of our development environment, one would have to run the following commands*
 >
-> Answer:
+> Answer:We used pip and Docker for managing our dependencies and development environment. The list of core Python dependencies was auto-generated and maintained in a requirements.txt file, while development-only tools were kept in requirements_dev.txt. To ensure the same environment across different machines and our GCP training pipeline, we packaged the exact Python version (3.11) and all required libraries into a Docker image.
+
+
+git clone https://github.com/Victor-Wei1001/mlops_project.git
+cd mlops_project 
+conda create -n dtu_mlops python=3.11 -y
+conda activate dtu_mlops
+pip install -r requirements.txt
+pip install -r requirements_dev.txt
+export GOOGLE_APPLICATION_CREDENTIALS="dtu-mlops-project-484513-db6b7e34022c.json"
+dvc pull
+pip install -e .
+
+
 
 --- question 4 fill here ---
 
@@ -175,8 +188,7 @@ will check the repositories and the code to verify your answers.
 > *because we did not use any ... in our project. We have added an ... folder that contains ... for running our*
 > *experiments.*
 >
-> Answer:
-
+> Answer:Our project was initialized using a standard MLOps cookiecutter template.We mainly worked in the src/ folder, where we separated data preprocessing, model training, and evaluation into different scripts to keep the code clean and easy to maintain. The data/ directory is used to store raw and processed datasets, and these are tracked with DVC. We also used the models/ folder to save trained model files and the tests/ folder to add unit tests for our main pipeline. Compared to the original template, we added a configs/ folder to manage hyperparameters and cloud settings, and a docker/ folder for Dockerfiles and deployment scripts.  
 --- question 5 fill here ---
 
 ### Question 6
@@ -190,7 +202,7 @@ will check the repositories and the code to verify your answers.
 > *We used ... for linting and ... for formatting. We also used ... for typing and ... for documentation. These*
 > *concepts are important in larger projects because ... . For example, typing ...*
 >
-> Answer:
+> Answer:To keep our code clean and easy to maintain, we set up simple but strict rules for code quality. We used flake8 to check that our code follows PEP 8 style guidelines and black to automatically format the code in a consistent way. In our CI/CD pipeline, every pull request runs a flake8 check, and the build fails if there are style problems, so only clean code can be merged.
 
 --- question 6 fill here ---
 
@@ -254,7 +266,7 @@ will check the repositories and the code to verify your answers.
 > *We did make use of DVC in the following way: ... . In the end it helped us in ... for controlling ... part of our*
 > *pipeline*
 >
-> Answer:
+> Answer:We used DVC to manage our English-to-Chinese translation dataset, which mainly consists of preprocessed PyTorch tensor files (train_data.pt). At first, the data was stored locally, but to support team collaboration and cloud training, we uploaded it to Google Cloud Storage (GCS) and set it as our DVC remote. One challenge we faced was authentication in the CI/CD pipeline, where Cloud Build could not pull the data because credentials were missing. We fixed this by using dvc remote modify --local in cloudbuild.yaml to dynamically attach the service account key during the build.
 
 --- question 10 fill here ---
 
@@ -271,7 +283,11 @@ will check the repositories and the code to verify your answers.
 > *and one for running ... . In particular for our ..., we used ... .An example of a triggered workflow can be seen*
 > *here: <weblink>*
 >
-> Answer:
+> Answer:We have organized our continuous integration into two main workflow checks in GitHub Actions: one for code linting and one for unit testing. Both workflows are triggered automatically on every push. For code linting, we use flake8 running on the Ubuntu operating system with Python 3.11 to ensure that all code follows PEP 8 style guidelines. To speed up the process, we use pip caching so dependencies do not need to be reinstalled every time.
+
+The unit testing workflow is the most important part of our CI setup. It runs our test suite using pytest and also generates a code coverage report in the same step. These tests check that the T5 model initializes correctly, that the tokenized datasets are loaded with the expected shapes, and that the model’s forward pass produces a valid loss value as a PyTorch tensor (not NaN). This setup ensures that any changes to the training or data pipeline are automatically tested and verified before deployment.
+
+Link to GitHub Actions: https://github.com/Victor-Wei1001/mlops_project/actions
 
 --- question 11 fill here ---
 
@@ -290,7 +306,10 @@ will check the repositories and the code to verify your answers.
 > Example:
 > *We used a simple argparser, that worked in the following way: Python  my_script.py --lr 1e-3 --batch_size 25*
 >
-> Answer:
+> Answer: In our project, we manage hyperparameters using a simple command-line interface built with argparse. Default values for parameters such as learning rate, batch size, and number of epochs are defined in src/models/train_model.py, but they can be easily changed when running the script. All chosen parameters are automatically logged by PyTorch Lightning’s WandbLogger, so each experiment and its configuration are saved in Weights & Biases for easy comparison.
+
+That worked in the following way:     
+python src/models/train_model.py --lr 2e-5 --batch_size 16 --epochs 10
 
 --- question 12 fill here ---
 
@@ -305,7 +324,8 @@ will check the repositories and the code to verify your answers.
 > *We made use of config files. Whenever an experiment is run the following happens: ... . To reproduce an experiment*
 > *one would have to do ...*
 >
-> Answer:
+> Answer:We ensure reproducibility by decoupling configuration from code and tracking every experimental artifact. We utilize argparse to inject hyperparameters, and by committing these settings to Git, we maintain a clear historical record of every experiment. To ensure deterministic results, we implemented pl.seed_everything(42) in our training script, which fixes the seeds for all random number generators.
+Furthermore, we use Docker to containerize our entire environment (Python 3.11 and dependencies), ensuring consistent execution across local and GCP environments. All experimental metrics and configurations are automatically logged via the WandbLogger to Weights & Biases, allowing us to compare runs and reproduce specific outcomes by referencing the logged hyperparameters and associated Git commit
 
 --- question 13 fill here ---
 
@@ -321,8 +341,13 @@ will check the repositories and the code to verify your answers.
 > Example:
 > *As seen in the first image when have tracked ... and ... which both inform us about ... in our experiments.*
 > *As seen in the second image we are also tracking ... and ...*
->
-> Answer:
+><p align="center">
+  <img src="figures/train_loss.png" width="45%" />
+  <img src="figures/epoch.png" width="45%" />
+</p>
+> Answer:As seen in the first image, we tracked the train_loss during the model training process on GCP. The curve shows a significant drop from 0.7 to below 0.1, indicating that the T5 model successfully converged and learned the translation patterns.
+
+As seen in the second image, we are also tracking the epoch progress. This confirms that our Cloud Build pipeline executed the full 5-epoch training schedule as configured, ensuring the model reached a stable state before the final weights were saved. Monitoring these metrics is vital for identifying potential training issues like overfitting or early stagnation in the cloud environment.
 
 --- question 14 fill here ---
 

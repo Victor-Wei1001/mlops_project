@@ -34,7 +34,11 @@ steps:
         dvc pull -v
         
         echo "--- [DEBUG] 启动训练 ---"
-        python src/models/train_model.py --epochs 1 --batch_size 2 --debug_mode
+        python src/models/train_model.py --epochs 50 --batch_size 8 --debug_mode --wandbkey ${_WANDB_KEY}
 
 # 设置 2 小时超时
-timeout: '7200s'
+timeout: '7200s'  
+
+
+substitutions:
+  _WANDB_KEY: "default_value"
