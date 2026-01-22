@@ -12,3 +12,4 @@ dvc[gs]==3.33.4
 fastapi
 uvicorn
 httpx
+psutil
