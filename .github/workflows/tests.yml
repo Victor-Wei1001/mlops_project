@@ -1,21 +1,24 @@
 name: Unit Tests
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
 
 jobs:
   run_tests:
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
         python-version: ["3.10", "3.11"]
 
-    runs-on: ${{ matrix.os }}
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -23,7 +26,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-py${{ matrix.python-version }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-py${{ matrix.python-version }}-pip-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
             ${{ runner.os }}-py${{ matrix.python-version }}-pip-
 
@@ -33,8 +36,7 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements_dev.txt
 
-
-      - name: Run tests (with coverage)
+      - name: Run Pytest with Coverage
         env:
           HF_HOME: .hf_cache
           TRANSFORMERS_CACHE: .hf_cache
