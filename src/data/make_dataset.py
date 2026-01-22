@@ -40,7 +40,7 @@ def main(k, output_dir):
 
     save_path = os.path.join(output_dir, "train_data.pt")
     torch.save(torch_data, save_path)
-    logger.info(f"Success! Saved to {save_path} (Size: {os.path.getsize(save_path)/(1024*1024):.2f} MB)")
+    logger.info(f"Success! Saved to {save_path} (Size: {os.path.getsize(save_path) / (1024 * 1024):.2f} MB)")
 
 
 if __name__ == "__main__":
