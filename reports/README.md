@@ -125,7 +125,7 @@ will check the repositories and the code to verify your answers.
 >
 > * sXXXXXX, sXXXXXX*
 >
-> Answer:s232898
+> Answer:s232898, s240195
 
 --- question 2 fill here ---
 
@@ -482,6 +482,10 @@ IAM & Service Accounts: Used to manage security permissions through JSON keys, a
 >
 > Answer:
 
+We did manage to write an API for our model using FastAPI. The API exposes the trained T5 translation model through a REST interface and loads the tokenizer and model once at application startup to reduce inference overhead. We implemented a /predict POST endpoint that accepts an English sentence in JSON format and returns the translated output together with basic metadata, such as the model name and whether fine-tuned weights were used.
+
+The API attempts to load the fine-tuned model weights produced during training and falls back to the base T5 model if the weights are unavailable. We used Pydantic models to define request and response schemas, ensuring clear input validation. Additionally, CORS support was enabled so the API could be accessed from a browser-based frontend, allowing interactive use of the translation model.
+
 --- question 23 fill here ---
 
 ### Question 24
@@ -497,6 +501,18 @@ IAM & Service Accounts: Used to manage security permissions through JSON keys, a
 > *`curl -X POST -F "file=@file.json"<weburl>`*
 >
 > Answer:
+
+We managed to deploy our API locally using Uvicorn as the ASGI server for FastAPI. The application runs on port 8000 and serves the trained translation model for inference. This allowed us to validate the full pipeline locally, including model loading, request handling, and prediction output.
+
+The deployed API can be invoked using standard HTTP requests. For example:
+
+```
+curl -X POST http://127.0.0.1:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text": "I love studying in Denmark, but winter is challenging."}'
+```
+
+This returns a JSON response containing the translated text. 
 
 --- question 24 fill here ---
 
@@ -569,6 +585,8 @@ maintain translation quality.
 > *implemented using ...*
 >
 > Answer:
+
+We additionally implemented a frontend for the FastAPI inference service, allowing non-technical users to interact with the trained model through a simple web interface.
 
 --- question 28 fill here ---
 
