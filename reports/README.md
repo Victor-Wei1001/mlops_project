@@ -82,18 +82,18 @@ will check the repositories and the code to verify your answers.
 * [ ] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
 * [ ] Create a trigger workflow for automatically building your docker images (M21)
 * [ ] Get your model training in GCP using either the Engine or Vertex AI (M21)
-* [ ] Create a FastAPI application that can do inference using your model (M22)
+* [x] Create a FastAPI application that can do inference using your model (M22)
 * [ ] Deploy your model in GCP using either Functions or Run as the backend (M23)
-* [ ] Write API tests for your application and setup continues integration for these (M24)
-* [ ] Load test your application (M24)
+* [x] Write API tests for your application and setup continues integration for these (M24)
+* [x] Load test your application (M24)
 * [ ] Create a more specialized ML-deployment API using either ONNX or BentoML, or both (M25)
-* [ ] Create a frontend for your API (M26)
+* [x] Create a frontend for your API (M26)
 
 ### Week 3
 
-* [ ] Check how robust your model is towards data drifting (M27)
+* [x] Check how robust your model is towards data drifting (M27)
 * [ ] Deploy to the cloud a drift detection API (M27)
-* [ ] Instrument your API with a couple of system metrics (M28)
+* [x] Instrument your API with a couple of system metrics (M28)
 * [ ] Setup cloud monitoring of your instrumented application (M28)
 * [ ] Create one or more alert systems in GCP to alert you if your app is not behaving correctly (M28)
 * [ ] If applicable, optimize the performance of your data loading using distributed data loading (M29)
@@ -483,7 +483,6 @@ We did manage to write an API for our model using FastAPI. The API exposes the t
 
 The API attempts to load the fine-tuned model weights produced during training and falls back to the base T5 model if the weights are unavailable. We used Pydantic models to define request and response schemas, ensuring clear input validation. Additionally, CORS support was enabled so the API could be accessed from a browser-based frontend, allowing interactive use of the translation model.
 
---- question 23 fill here ---
 
 ### Question 24
 
@@ -499,7 +498,9 @@ The API attempts to load the fine-tuned model weights produced during training a
 >
 > Answer:
 
-We managed to deploy our API locally using Uvicorn as the ASGI server for FastAPI. The application runs on port 8000 and serves the trained translation model for inference. This allowed us to validate the full pipeline locally, including model loading, request handling, and prediction output.
+We managed to deploy our API locally using FastAPI with Uvicorn as the ASGI server. The application runs on port 8000 and serves the trained translation model for inference. This local deployment allowed us to validate the complete inference pipeline, including model loading at startup, request handling, prediction generation, and response formatting.
+
+In addition to basic deployment, the API was instrumented with lightweight system monitoring. For each request, we log structured metrics such as request latency, CPU usage, memory consumption, and model configuration metadata. These logs provide visibility into the runtime behavior of the service and prepare the application for future cloud-based monitoring.
 
 The deployed API can be invoked using standard HTTP requests. For example:
 
@@ -511,7 +512,7 @@ curl -X POST http://127.0.0.1:8000/predict \
 
 This returns a JSON response containing the translated text. 
 
---- question 24 fill here ---
+We did not deploy the API to a cloud service due to time and cost constraints, but the FastAPI and Docker-based setup makes it straightforward to extend the deployment to a managed cloud environment.
 
 ### Question 25
 
@@ -538,7 +539,7 @@ Min latency: 1.294 seconds \
 Max latency: 1.934 seconds    
 ```
 All requests completed successfully without failures, demonstrating that the API remains stable under concurrent usage.
---- question 25 fill here ---
+
 
 ### Question 26
 
@@ -648,3 +649,7 @@ We additionally implemented a frontend for the FastAPI inference service, allowi
 > Answer:
 
  Student s232898 contributed to the development of the project's machine learning pipeline by working on the T5-based translation model and implementing data processing scripts for the English-to-Chinese translation task. He helped set up the training workflow using PyTorch Lightning and developed scripts for data loading and preprocessing to support effective model training. In addition, he worked on the project infrastructure, including building Docker containers for training and inference, using DVC to manage dataset versioning on Google Cloud Storage, and configuring parts of the Google Cloud Build pipeline. He also integrated Weights & Biases to enable monitoring of training loss and system metrics during experiments.
+
+ Student s240195 contributed primarily to the deployment-facing and analysis components of the project. She implemented the FastAPI-based inference service for the trained translation model, enabling local serving of the full inference pipeline and developed a simple frontend interface. In addition, she wrote API-level tests and integrated these tests into the existing continuous integration pipeline. She also performed load testing of the API using a lightweight HTTP client to measure latency under repeated requests. Furthermore, she performed an offline robustness and data drift analysis to evaluate how the model behaves under different prompt formats and input distributions, and instrumented the API with structured logging and basic system-level runtime metrics to support observability. 
+
+ We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.
