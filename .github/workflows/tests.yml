@@ -29,7 +29,7 @@ jobs:
         # 按照你的需求填充依赖 [cite: 2026-01-09]
         pip install -r requirements.txt
         # 安装测试专用工具 [cite: 2026-01-09]
-        pip install pytest pytest-cov coverage flake8 protobuf datasets
+        pip install -r requirements_dev.txt
 
     - name: Run Pytest with Coverage
       run: |
