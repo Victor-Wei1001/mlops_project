@@ -9,3 +9,6 @@ wandb
 hydra-core
 pathspec==0.11.2
 dvc[gs]==3.33.4
+fastapi
+uvicorn
+httpx

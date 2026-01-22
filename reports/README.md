@@ -123,9 +123,9 @@ will check the repositories and the code to verify your answers.
 >
 > Example:
 >
-> *s232898, sXXXXXX, sXXXXXX*
+> * sXXXXXX, sXXXXXX*
 >
-> Answer:
+> Answer:s232898, s240195
 
 --- question 2 fill here ---
 
@@ -139,7 +139,7 @@ will check the repositories and the code to verify your answers.
 > *We used the third-party framework ... in our project. We used functionality ... and functionality ... from the*
 > *package to do ... and ... in our project*.
 >
-> Answer:
+> Answer:We used the HuggingFace transformers library to make our project easier and more efficient. By loading the pre-trained t5-small model with T5ForConditionalGeneration, we could build an English-to-Chinese translation model using transfer learning, which saved time and computing resources. The T5Tokenizer helped us handle English and Chinese text automatically, including sub-word tokenization and vocabulary mapping, without extra implementation effort.
 
 --- question 3 fill here ---
 
@@ -159,7 +159,20 @@ will check the repositories and the code to verify your answers.
 > *We used ... for managing our dependencies. The list of dependencies was auto-generated using ... . To get a*
 > *complete copy of our development environment, one would have to run the following commands*
 >
-> Answer:
+> Answer:We used pip and Docker for managing our dependencies and development environment. The list of core Python dependencies was auto-generated and maintained in a requirements.txt file, while development-only tools were kept in requirements_dev.txt. To ensure the same environment across different machines and our GCP training pipeline, we packaged the exact Python version (3.11) and all required libraries into a Docker image.
+
+```
+git clone https://github.com/Victor-Wei1001/mlops_project.git
+cd mlops_project 
+conda create -n dtu_mlops python=3.11 -y
+conda activate dtu_mlops
+pip install -r requirements.txt
+pip install -r requirements_dev.txt
+export GOOGLE_APPLICATION_CREDENTIALS="dtu-mlops-project-484513-db6b7e34022c.json"
+dvc pull
+pip install -e .
+```
+
 
 --- question 4 fill here ---
 
@@ -175,8 +188,7 @@ will check the repositories and the code to verify your answers.
 > *because we did not use any ... in our project. We have added an ... folder that contains ... for running our*
 > *experiments.*
 >
-> Answer:
-
+> Answer:Our project was initialized using a standard MLOps cookiecutter template.We mainly worked in the src/ folder, where we separated data preprocessing, model training, and evaluation into different scripts to keep the code clean and easy to maintain. The data/ directory is used to store raw and processed datasets, and these are tracked with DVC. We also used the models/ folder to save trained model files and the tests/ folder to add unit tests for our main pipeline. Compared to the original template, we added a configs/ folder to manage hyperparameters and cloud settings, and a docker/ folder for Dockerfiles and deployment scripts.  
 --- question 5 fill here ---
 
 ### Question 6
@@ -190,7 +202,7 @@ will check the repositories and the code to verify your answers.
 > *We used ... for linting and ... for formatting. We also used ... for typing and ... for documentation. These*
 > *concepts are important in larger projects because ... . For example, typing ...*
 >
-> Answer:
+> Answer:To keep our code clean and easy to maintain, we set up simple but strict rules for code quality. We used flake8 to check that our code follows PEP 8 style guidelines and black to automatically format the code in a consistent way. In our CI/CD pipeline, every pull request runs a flake8 check, and the build fails if there are style problems, so only clean code can be merged.
 
 --- question 6 fill here ---
 
@@ -254,7 +266,7 @@ will check the repositories and the code to verify your answers.
 > *We did make use of DVC in the following way: ... . In the end it helped us in ... for controlling ... part of our*
 > *pipeline*
 >
-> Answer:
+> Answer:We used DVC to manage our English-to-Chinese translation dataset, which mainly consists of preprocessed PyTorch tensor files (train_data.pt). At first, the data was stored locally, but to support team collaboration and cloud training, we uploaded it to Google Cloud Storage (GCS) and set it as our DVC remote. One challenge we faced was authentication in the CI/CD pipeline, where Cloud Build could not pull the data because credentials were missing. We fixed this by using dvc remote modify --local in cloudbuild.yaml to dynamically attach the service account key during the build.
 
 --- question 10 fill here ---
 
@@ -271,7 +283,9 @@ will check the repositories and the code to verify your answers.
 > *and one for running ... . In particular for our ..., we used ... .An example of a triggered workflow can be seen*
 > *here: <weblink>*
 >
-> Answer:
+> Answer:We have organized our continuous integration into two main workflow checks in GitHub Actions: one for code linting and one for unit testing. Both workflows are triggered automatically on every push. For code linting, we use flake8 running on the Ubuntu operating system with Python 3.11 to ensure that all code follows PEP 8 style guidelines. To speed up the process, we use pip caching so dependencies do not need to be reinstalled every time.
+The unit testing workflow is the most important part of our CI setup. It runs our test suite using pytest and also generates a code coverage report in the same step. These tests check that the T5 model initializes correctly, that the tokenized datasets are loaded with the expected shapes, and that the model’s forward pass produces a valid loss value as a PyTorch tensor (not NaN). This setup ensures that any changes to the training or data pipeline are automatically tested and verified before deployment.
+Link to GitHub Actions: https://github.com/Victor-Wei1001/mlops_project/actions
 
 --- question 11 fill here ---
 
@@ -290,8 +304,11 @@ will check the repositories and the code to verify your answers.
 > Example:
 > *We used a simple argparser, that worked in the following way: Python  my_script.py --lr 1e-3 --batch_size 25*
 >
-> Answer:
-
+> Answer: In our project, we manage hyperparameters using a simple command-line interface built with argparse. Default values for parameters such as learning rate, batch size, and number of epochs are defined in src/models/train_model.py, but they can be easily changed when running the script. All chosen parameters are automatically logged by PyTorch Lightning's WandbLogger, so each experiment and its configuration are saved in Weights & Biases for easy comparison.
+That worked in the following way:     
+```
+python src/models/train_model.py --lr 2e-5 --batch_size 16 --epochs 10
+```
 --- question 12 fill here ---
 
 ### Question 13
@@ -305,7 +322,8 @@ will check the repositories and the code to verify your answers.
 > *We made use of config files. Whenever an experiment is run the following happens: ... . To reproduce an experiment*
 > *one would have to do ...*
 >
-> Answer:
+> Answer:We ensure reproducibility by decoupling configuration from code and tracking every experimental artifact. We utilize argparse to inject hyperparameters, and by committing these settings to Git, we maintain a clear historical record of every experiment. To ensure deterministic results, we implemented pl.seed_everything(42) in our training script, which fixes the seeds for all random number generators.
+Furthermore, we use Docker to containerize our entire environment (Python 3.11 and dependencies), ensuring consistent execution across local and GCP environments. All experimental metrics and configurations are automatically logged via the WandbLogger to Weights & Biases, allowing us to compare runs and reproduce specific outcomes by referencing the logged hyperparameters and associated Git commit
 
 --- question 13 fill here ---
 
@@ -321,9 +339,14 @@ will check the repositories and the code to verify your answers.
 > Example:
 > *As seen in the first image when have tracked ... and ... which both inform us about ... in our experiments.*
 > *As seen in the second image we are also tracking ... and ...*
->
-> Answer:
+ 
+> Answer:As seen in the first image, we tracked the train_loss during the model training process on GCP. The curve shows a significant drop from 0.7 to below 0.1, indicating that the T5 model successfully converged and learned the translation patterns.
 
+![Training loss](figures/train_loss.png)
+
+As seen in the second image, we are also tracking the epoch progress. This confirms that our Cloud Build pipeline executed the full 5-epoch training schedule as configured, ensuring the model reached a stable state before the final weights were saved. Monitoring these metrics is vital for identifying potential training issues like overfitting or early stagnation in the cloud environment.
+
+![Validation loss](figures/epoch.png)
 --- question 14 fill here ---
 
 ### Question 15
@@ -337,7 +360,9 @@ will check the repositories and the code to verify your answers.
 > *For our project we developed several images: one for training, inference and deployment. For example to run the*
 > *training docker image: `docker run trainer:latest lr=1e-3 batch_size=64`. Link to docker file: <weblink>*
 >
-> Answer:
+> Answer:In our project, we utilize Docker to ensure environment consistency across different stages of the ML lifecycle, from local development to cloud training and deployment. We developed a Dockerfile (e.g., predict.dockerfile) that encapsulates our entire software stack, including Python 3.11, PyTorch Lightning, and the Transformers library.
+Link to Dockerfile: https://github.com/Victor-Wei1001/mlops_project/blob/main/predict.dockerfile
+By containerizing our environment, we eliminate the "it works on my machine" problem, ensuring that the T5 model trains identically on GCP Cloud Build as it does locally. We use these images to run our training experiments on Google Cloud’s managed infrastructure, leveraging the built-in support for Docker containers in GCP。
 
 --- question 15 fill here ---
 
@@ -352,7 +377,7 @@ will check the repositories and the code to verify your answers.
 > *Debugging method was dependent on group member. Some just used ... and others used ... . We did a single profiling*
 > *run of our main code at some point that showed ...*
 >
-> Answer:
+> Answer:Our debugging followed a tiered strategy to ensure efficiency and cost-control. Locally, we implemented a --debug_mode flag in train_model.py that limits training to 10% of the data, allowing us to catch logical errors quickly before full-scale execution. For cloud runs, we relied on GCP Build logs and Weights & Biases (W&B) to identify training anomalies or hyperparameter issues in real-time.
 
 --- question 16 fill here ---
 
@@ -369,7 +394,13 @@ will check the repositories and the code to verify your answers.
 > Example:
 > *We used the following two services: Engine and Bucket. Engine is used for... and Bucket is used for...*
 >
-> Answer:
+> Answer:Buckets (Cloud Storage): We used buckets to store our processed datasets and model checkpoints, integrated via DVC for version control.
+
+Cloud Build: Used as our CI/CD engine to automate the building of Docker images and execute our training experiments in the cloud.
+
+Container Registry (GCR): Used to store and manage our versioned Docker images, such as the predict:latest image used for training.
+
+IAM & Service Accounts: Used to manage security permissions through JSON keys, allowing our build steps to pull data from storage buckets securely.
 
 --- question 17 fill here ---
 
@@ -383,8 +414,8 @@ will check the repositories and the code to verify your answers.
 > Example:
 > *We used the compute engine to run our ... . We used instances with the following hardware: ... and we started the*
 > *using a custom container: ...*
->
-> Answer:
+
+> Answer:We utilized Compute Engine indirectly through Cloud Build's managed workers. Instead of manually provisioning persistent VMs, Cloud Build automatically spun up a temporary VM instance each time we triggered a training run.
 
 --- question 18 fill here ---
 
@@ -394,6 +425,9 @@ will check the repositories and the code to verify your answers.
 > **You can take inspiration from [this figure](figures/bucket.png).**
 >
 > Answer:
+![data_store1](figures/data_store1.png)
+
+![data_store2](figures/data_store2.png)
 
 --- question 19 fill here ---
 
@@ -412,7 +446,7 @@ will check the repositories and the code to verify your answers.
 > **your project. You can take inspiration from [this figure](figures/build.png).**
 >
 > Answer:
-
+![cloud_build](figures/cloud_build.png)
 --- question 21 fill here ---
 
 ### Question 22
@@ -426,7 +460,7 @@ will check the repositories and the code to verify your answers.
 > *We managed to train our model in the cloud using the Engine. We did this by ... . The reason we choose the Engine*
 > *was because ...*
 >
-> Answer:
+> Answer:We successfully trained our model in the cloud using Google Cloud Build as a serverless execution engine. The pipeline automated the environment setup using Docker images from GCR and retrieved versioned datasets from Google Cloud Storage via DVC. By securely passing our API key through Cloud Build substitutions, we monitored training progress in real-time on Weights & Biases, ensuring model convergence .
 
 --- question 22 fill here ---
 
@@ -445,6 +479,10 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
+We did manage to write an API for our model using FastAPI. The API exposes the trained T5 translation model through a REST interface and loads the tokenizer and model once at application startup to reduce inference overhead. We implemented a /predict POST endpoint that accepts an English sentence in JSON format and returns the translated output together with basic metadata, such as the model name and whether fine-tuned weights were used.
+
+The API attempts to load the fine-tuned model weights produced during training and falls back to the base T5 model if the weights are unavailable. We used Pydantic models to define request and response schemas, ensuring clear input validation. Additionally, CORS support was enabled so the API could be accessed from a browser-based frontend, allowing interactive use of the translation model.
+
 --- question 23 fill here ---
 
 ### Question 24
@@ -461,6 +499,18 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
+We managed to deploy our API locally using Uvicorn as the ASGI server for FastAPI. The application runs on port 8000 and serves the trained translation model for inference. This allowed us to validate the full pipeline locally, including model loading, request handling, and prediction output.
+
+The deployed API can be invoked using standard HTTP requests. For example:
+
+```
+curl -X POST http://127.0.0.1:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text": "I love studying in Denmark, but winter is challenging."}'
+```
+
+This returns a JSON response containing the translated text. 
+
 --- question 24 fill here ---
 
 ### Question 25
@@ -476,6 +526,18 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
+We performed both unit testing and load testing for our FastAPI-based inference API.
+
+Unit testing was implemented using pytest together with FastAPI TestClient, covering the `/health` and `/predict` endpoints to ensure correct responses and output structure.
+
+For load testing, we executed a lightweight Python-based load test script that repeatedly sent POST requests to the `/predict` endpoint. The performance results (latency statistics and total number of requests) are shown as follow. 
+```
+Total requests: 20 \
+Average latency: 1.474 seconds \
+Min latency: 1.294 seconds \    
+Max latency: 1.934 seconds    
+```
+All requests completed successfully without failures, demonstrating that the API remains stable under concurrent usage.
 --- question 25 fill here ---
 
 ### Question 26
@@ -489,7 +551,13 @@ will check the repositories and the code to verify your answers.
 > *We did not manage to implement monitoring. We would like to have monitoring implemented such that over time we could*
 > *measure ... and ... that would inform us about this ... behaviour of our application.*
 >
-> Answer:
+> Answer:We used Weights & Biases (W&B) for training-time monitoring to track key metrics such as training loss,
+epoch progress, and hardware usage (CPU/RAM). This helped ensure that the T5 model trained and converged
+correctly during cloud execution. We did not implement live monitoring for a deployed production endpoint.
+
+Production monitoring would be important to detect data drift and performance degradation over time.
+By monitoring prediction confidence and system latency, we could decide when retraining is needed to
+maintain translation quality.
 
 --- question 26 fill here ---
 
@@ -508,7 +576,8 @@ will check the repositories and the code to verify your answers.
 > *Group member 1 used ..., Group member 2 used ..., in total ... credits was spend during development. The service*
 > *costing the most was ... due to ... . Working in the cloud was ...*
 >
-> Answer:
+> Answer:Group member 1 used approximately kr. 3.51 in GCP credits .The service costing the most was Artifact Registry (kr. 3.41) due to storing Docker images for the T5 model,followed by minor costs for Cloud Build (kr. 0.09) and Cloud Storage (kr. 0.01).
+ 
 
 --- question 27 fill here ---
 
@@ -525,6 +594,8 @@ will check the repositories and the code to verify your answers.
 > *implemented using ...*
 >
 > Answer:
+
+We additionally implemented a frontend for the FastAPI inference service, allowing non-technical users to interact with the trained model through a simple web interface.
 
 --- question 28 fill here ---
 
@@ -555,7 +626,8 @@ will check the repositories and the code to verify your answers.
 > Example:
 > *The biggest challenges in the project was using ... tool to do ... . The reason for this was ...*
 >
-> Answer:
+> Answer:1.One of our biggest challenges was managing IAM permissions and service account keys to ensure Cloud Build could securely access Google Cloud Storage. We    spent significant time debugging authentication errors.
+2.Ensuring that the complex T5 and PyTorch environment remained consistent from local development to the cloud was difficult. We addressed this by strictly containerizing our workflow with Docker and implementing a k parameter in our data processing script.
 
 --- question 30 fill here ---
 
@@ -575,14 +647,4 @@ will check the repositories and the code to verify your answers.
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:
 
-fewafewubaofewnafioewnifowf ewafw afew afewafewafionewoanf waf ewonfieownaf fewnaiof newio fweanøf wea fewa
- fweafewa fewiagonwa ognwra'g
- wa
- gwreapig ipweroang w rag
- wa grwa
-  g
-  ew
-  gwea g
-  ew ag ioreabnguorwa bg̈́aw
-   wa
-   gew4igioera giroeahgi0wra gwa
+ Student s232898 contributed to the development of the project's machine learning pipeline by working on the T5-based translation model and implementing data processing scripts for the English-to-Chinese translation task. He helped set up the training workflow using PyTorch Lightning and developed scripts for data loading and preprocessing to support effective model training. In addition, he worked on the project infrastructure, including building Docker containers for training and inference, using DVC to manage dataset versioning on Google Cloud Storage, and configuring parts of the Google Cloud Build pipeline. He also integrated Weights & Biases to enable monitoring of training loss and system metrics during experiments.
