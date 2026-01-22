@@ -284,9 +284,7 @@ pip install -e .
 > *here: <weblink>*
 >
 > Answer:We have organized our continuous integration into two main workflow checks in GitHub Actions: one for code linting and one for unit testing. Both workflows are triggered automatically on every push. For code linting, we use flake8 running on the Ubuntu operating system with Python 3.11 to ensure that all code follows PEP 8 style guidelines. To speed up the process, we use pip caching so dependencies do not need to be reinstalled every time.
-
 The unit testing workflow is the most important part of our CI setup. It runs our test suite using pytest and also generates a code coverage report in the same step. These tests check that the T5 model initializes correctly, that the tokenized datasets are loaded with the expected shapes, and that the model’s forward pass produces a valid loss value as a PyTorch tensor (not NaN). This setup ensures that any changes to the training or data pipeline are automatically tested and verified before deployment.
-
 Link to GitHub Actions: https://github.com/Victor-Wei1001/mlops_project/actions
 
 --- question 11 fill here ---
@@ -307,10 +305,10 @@ Link to GitHub Actions: https://github.com/Victor-Wei1001/mlops_project/actions
 > *We used a simple argparser, that worked in the following way: Python  my_script.py --lr 1e-3 --batch_size 25*
 >
 > Answer: In our project, we manage hyperparameters using a simple command-line interface built with argparse. Default values for parameters such as learning rate, batch size, and number of epochs are defined in src/models/train_model.py, but they can be easily changed when running the script. All chosen parameters are automatically logged by PyTorch Lightning's WandbLogger, so each experiment and its configuration are saved in Weights & Biases for easy comparison.
-
 That worked in the following way:     
+```
 python src/models/train_model.py --lr 2e-5 --batch_size 16 --epochs 10
-
+```
 --- question 12 fill here ---
 
 ### Question 13
@@ -364,7 +362,6 @@ As seen in the second image, we are also tracking the epoch progress. This confi
 >
 > Answer:In our project, we utilize Docker to ensure environment consistency across different stages of the ML lifecycle, from local development to cloud training and deployment. We developed a Dockerfile (e.g., predict.dockerfile) that encapsulates our entire software stack, including Python 3.11, PyTorch Lightning, and the Transformers library.
 Link to Dockerfile: https://github.com/Victor-Wei1001/mlops_project/blob/main/predict.dockerfile
-
 By containerizing our environment, we eliminate the "it works on my machine" problem, ensuring that the T5 model trains identically on GCP Cloud Build as it does locally. We use these images to run our training experiments on Google Cloud’s managed infrastructure, leveraging the built-in support for Docker containers in GCP。
 
 --- question 15 fill here ---
@@ -584,9 +581,7 @@ maintain translation quality.
 > *We implemented a frontend for our API. We did this because we wanted to show the user ... . The frontend was*
 > *implemented using ...*
 >
-> Answer:
-
-We additionally implemented a frontend for the FastAPI inference service, allowing non-technical users to interact with the trained model through a simple web interface.
+> Answer:We additionally implemented a frontend for the FastAPI inference service, allowing non-technical users to interact with the trained model through a simple web interface.
 
 --- question 28 fill here ---
 
