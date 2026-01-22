@@ -449,7 +449,7 @@ IAM & Service Accounts: Used to manage security permissions through JSON keys, a
 > **your project. You can take inspiration from [this figure](figures/build.png).**
 >
 > Answer:
-
+![cloud_build](figures/cloud_build.png)
 --- question 21 fill here ---
 
 ### Question 22
