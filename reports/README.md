@@ -526,6 +526,18 @@ This returns a JSON response containing the translated text.
 >
 > Answer:
 
+We performed both unit testing and load testing for our FastAPI-based inference API.
+
+Unit testing was implemented using pytest together with FastAPI TestClient, covering the `/health` and `/predict` endpoints to ensure correct responses and output structure.
+
+For load testing, we executed a lightweight Python-based load test script that repeatedly sent POST requests to the `/predict` endpoint. The performance results (latency statistics and total number of requests) are shown as follow. 
+```
+Total requests: 20 \
+Average latency: 1.474 seconds \
+Min latency: 1.294 seconds \    
+Max latency: 1.934 seconds    
+```
+All requests completed successfully without failures, demonstrating that the API remains stable under concurrent usage.
 --- question 25 fill here ---
 
 ### Question 26
@@ -581,7 +593,9 @@ maintain translation quality.
 > *We implemented a frontend for our API. We did this because we wanted to show the user ... . The frontend was*
 > *implemented using ...*
 >
-> Answer:We additionally implemented a frontend for the FastAPI inference service, allowing non-technical users to interact with the trained model through a simple web interface.
+> Answer:
+
+We additionally implemented a frontend for the FastAPI inference service, allowing non-technical users to interact with the trained model through a simple web interface.
 
 --- question 28 fill here ---
 
