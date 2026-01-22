@@ -306,7 +306,7 @@ Link to GitHub Actions: https://github.com/Victor-Wei1001/mlops_project/actions
 > Example:
 > *We used a simple argparser, that worked in the following way: Python  my_script.py --lr 1e-3 --batch_size 25*
 >
-> Answer: In our project, we manage hyperparameters using a simple command-line interface built with argparse. Default values for parameters such as learning rate, batch size, and number of epochs are defined in src/models/train_model.py, but they can be easily changed when running the script. All chosen parameters are automatically logged by PyTorch Lightning’s WandbLogger, so each experiment and its configuration are saved in Weights & Biases for easy comparison.
+> Answer: In our project, we manage hyperparameters using a simple command-line interface built with argparse. Default values for parameters such as learning rate, batch size, and number of epochs are defined in src/models/train_model.py, but they can be easily changed when running the script. All chosen parameters are automatically logged by PyTorch Lightning's WandbLogger, so each experiment and its configuration are saved in Weights & Biases for easy comparison.
 
 That worked in the following way:     
 python src/models/train_model.py --lr 2e-5 --batch_size 16 --epochs 10
@@ -417,8 +417,8 @@ IAM & Service Accounts: Used to manage security permissions through JSON keys, a
 > Example:
 > *We used the compute engine to run our ... . We used instances with the following hardware: ... and we started the*
 > *using a custom container: ...*
->We utilized Compute Engine indirectly through Cloud Build's managed workers. Instead of manually provisioning persistent VMs, Cloud Build automatically spun up a temporary VM instance each time we triggered a training run.
-> Answer:
+
+> Answer:We utilized Compute Engine indirectly through Cloud Build's managed workers. Instead of manually provisioning persistent VMs, Cloud Build automatically spun up a temporary VM instance each time we triggered a training run.
 
 --- question 18 fill here ---
 
@@ -428,6 +428,9 @@ IAM & Service Accounts: Used to manage security permissions through JSON keys, a
 > **You can take inspiration from [this figure](figures/bucket.png).**
 >
 > Answer:
+![data_store1](figures/data_store1.png)
+
+![data_store2](figures/data_store2.png)
 
 --- question 19 fill here ---
 
@@ -523,7 +526,13 @@ IAM & Service Accounts: Used to manage security permissions through JSON keys, a
 > *We did not manage to implement monitoring. We would like to have monitoring implemented such that over time we could*
 > *measure ... and ... that would inform us about this ... behaviour of our application.*
 >
-> Answer:
+> Answer:We used Weights & Biases (W&B) for training-time monitoring to track key metrics such as training loss,
+epoch progress, and hardware usage (CPU/RAM). This helped ensure that the T5 model trained and converged
+correctly during cloud execution. We did not implement live monitoring for a deployed production endpoint.
+
+Production monitoring would be important to detect data drift and performance degradation over time.
+By monitoring prediction confidence and system latency, we could decide when retraining is needed to
+maintain translation quality.
 
 --- question 26 fill here ---
 
@@ -542,7 +551,8 @@ IAM & Service Accounts: Used to manage security permissions through JSON keys, a
 > *Group member 1 used ..., Group member 2 used ..., in total ... credits was spend during development. The service*
 > *costing the most was ... due to ... . Working in the cloud was ...*
 >
-> Answer:
+> Answer:Group member 1 used approximately kr. 3.51 in GCP credits .The service costing the most was Artifact Registry (kr. 3.41) due to storing Docker images for the T5 model,followed by minor costs for Cloud Build (kr. 0.09) and Cloud Storage (kr. 0.01).
+ 
 
 --- question 27 fill here ---
 
@@ -589,7 +599,8 @@ IAM & Service Accounts: Used to manage security permissions through JSON keys, a
 > Example:
 > *The biggest challenges in the project was using ... tool to do ... . The reason for this was ...*
 >
-> Answer:1.
+> Answer:1.One of our biggest challenges was managing IAM permissions and service account keys to ensure Cloud Build could securely access Google Cloud Storage. We    spent significant time debugging authentication errors.
+2.Ensuring that the complex T5 and PyTorch environment remained consistent from local development to the cloud was difficult. We addressed this by strictly containerizing our workflow with Docker and implementing a k parameter in our data processing script.
 
 --- question 30 fill here ---
 
