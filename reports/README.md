@@ -438,6 +438,8 @@ IAM & Service Accounts: Used to manage security permissions through JSON keys, a
 >
 > Answer:
 
+[registry.png](figures/registry.png)
+
 --- question 20 fill here ---
 
 ### Question 21
