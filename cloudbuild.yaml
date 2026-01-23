@@ -2,10 +2,10 @@ steps:
   # 步骤 1: 构建镜像 (在这里强制不使用缓存)
   - name: 'gcr.io/cloud-builders/docker'
     args: [
-      'build', 
-      '--no-cache', 
-      '-t', 'gcr.io/dtu-mlops-project-484513/predict:latest', 
-      '-f', 'predict.dockerfile', 
+      'build',
+      '--no-cache',
+      '-t', 'gcr.io/dtu-mlops-project-484513/predict:latest',
+      '-f', 'predict.dockerfile',
       '.'
     ]
 
@@ -26,18 +26,18 @@ steps:
         echo "--- [DEBUG] 源码内容审计 ---"
         cat src/models/model.py
         echo "--------------------------"
-        
+
         dvc config core.no_scm true
         dvc remote modify --local gcp_storage credentialpath /app/dtu-mlops-project-484513-db6b7e34022c.json
-        
+
         echo "--- [DEBUG] 正在拉取数据 ---"
         dvc pull -v
-        
+
         echo "--- [DEBUG] 启动训练 ---"
         python src/models/train_model.py --epochs 5 --batch_size 8 --debug_mode --wandbkey ${_WANDB_KEY}
 
 # 设置 2 小时超时
-timeout: '72000s'  
+timeout: '72000s'
 
 
 substitutions:

@@ -4,20 +4,20 @@ from src.models.model import T5Model
 from transformers import T5Tokenizer
 
 
-def predict(text: str):
+def predict(text: str, model_path="models/final_model.pt", tokenizer=None, model_cls=T5Model):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model_path = "models/final_model.pt"
 
     if not os.path.exists(model_path):
         return f"Error: Weight file {model_path} not found."
 
-    model = T5Model().to(device)
+    model = model_cls().to(device)
     # 加载权重
     state_dict = torch.load(model_path, map_location=device, weights_only=True)
     model.load_state_dict(state_dict)
     model.eval()
 
-    tokenizer = T5Tokenizer.from_pretrained("t5-small", legacy=False)
+    if tokenizer is None:
+        tokenizer = T5Tokenizer.from_pretrained("t5-small", legacy=False)
     input_text = "translate English to Chinese: " + text
     inputs = tokenizer(input_text, return_tensors="pt", padding=True, truncation=True, max_length=128).to(device)
 

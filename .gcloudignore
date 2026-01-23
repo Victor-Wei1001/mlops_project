@@ -1,11 +1,11 @@
-* 
-!*/ 
-!src/ 
-!src/** 
-!requirements.txt 
-!predict.dockerfile 
-!cloudbuild.yaml 
-!dtu-mlops-project-484513-db6b7e34022c.json 
+*
+!*/
+!src/
+!src/**
+!requirements.txt
+!predict.dockerfile
+!cloudbuild.yaml
+!dtu-mlops-project-484513-db6b7e34022c.json
 # 建议将 DVC 部分改为：
 !.dvc/
 !.dvc/**
