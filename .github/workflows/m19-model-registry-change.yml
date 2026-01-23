@@ -1,0 +1,19 @@
+name: M19 - Model Registry Change Trigger
+
+on:
+  push:
+    paths:
+      - "models/**"
+  pull_request:
+    paths:
+      - "models/**"
+
+jobs:
+  model_registry_change:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show changed files
+        run: |
+          echo "Triggered by model registry changes (models/)."
+          git --no-pager diff --name-only ${{ github.event.before }} ${{ github.sha }} || true
