@@ -449,7 +449,7 @@ IAM & Service Accounts: Used to manage security permissions through JSON keys, a
 >
 > Answer:
 
-[registry](figures/registry.png)
+![registry](figures/registry.png)
 
 --- question 20 fill here ---
 
@@ -630,9 +630,13 @@ We additionally implemented a frontend for the FastAPI inference service, allowi
 > *The starting point of the diagram is our local setup, where we integrated ... and ... and ... into our code.*
 > *Whenever we commit code and push to GitHub, it auto triggers ... and ... . From there the diagram shows ...*
 >
-> Answer: The figure shows our end-to-end MLOps setup from local development to cloud training and serving. We start on a local machine where we develop the code, run unit tests, and build Docker images for reproducibility. Before pushing changes, we use pre-commit hooks (e.g., formatting and linting) to catch common issues early.
+> Answer:
 
-When we push code to GitHub and open pull requests, GitHub Actions automatically runs our CI workflows. This includes linting (flake8) and unit tests (pytest) with a matrix over multiple operating systems and Python versions, plus caching to speed up repeated runs. This helps keep the main branch stable and prevents broken code from being merged.
+![overview](figures/overview.jpg)
+
+The figure shows our end-to-end MLOps setup from local development to cloud training and serving. We start on a local machine where we develop the code, run unit tests, and build Docker images for reproducibility. Before pushing changes, we use pre-commit hooks (e.g., formatting and linting) to catch common issues early.
+
+When we push code to GitHub and open pull requests, GitHub Actions automatically runs our CI workflows. This includes linting (flake8) and unit tests (pytest) with a matrix over multiple operating systems and Python versions, plus caching to speed up repeated runs. This helps keep the main branch stable and prevents broken code from being merged. For deployment, we used the FastAPI for local deployment and wrote a front-end webpage for user interaction.
 
 
 --- question 29 fill here ---
