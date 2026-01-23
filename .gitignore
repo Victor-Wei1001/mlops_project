@@ -76,17 +76,17 @@ target/
 .ipynb_checkpoints/
 
 # exclude data from source control by default
- 
+
 data/**
 !data/**/
 !data/**/*.dvc
 !data/.gitignore
 
- 
+
 models/*
 !models/.gitkeep
 
- 
+
 dtu-mlops-project-484513-db6b7e34022c.json
 
 # Mac OS-specific storage files
@@ -98,17 +98,13 @@ dtu-mlops-project-484513-db6b7e34022c.json
 
 # Mypy cache
 .mypy_cache/
- 
+
 /models/*
 !/models/.gitkeep
 
- 
+
 /lightning_logs/
 /outputs/
 /multirun/
- 
+
 .pdm-python
-
-
- 
- 
