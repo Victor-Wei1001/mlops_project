@@ -125,7 +125,7 @@ will check the repositories and the code to verify your answers.
 >
 > * sXXXXXX, sXXXXXX*
 >
-> Answer:s232898, s240195
+> Answer:s232898, s240195, s242649
 
 --- question 2 fill here ---
 
@@ -163,7 +163,7 @@ will check the repositories and the code to verify your answers.
 
 ```
 git clone https://github.com/Victor-Wei1001/mlops_project.git
-cd mlops_project 
+cd mlops_project
 conda create -n dtu_mlops python=3.11 -y
 conda activate dtu_mlops
 pip install -r requirements.txt
@@ -188,7 +188,7 @@ pip install -e .
 > *because we did not use any ... in our project. We have added an ... folder that contains ... for running our*
 > *experiments.*
 >
-> Answer:Our project was initialized using a standard MLOps cookiecutter template.We mainly worked in the src/ folder, where we separated data preprocessing, model training, and evaluation into different scripts to keep the code clean and easy to maintain. The data/ directory is used to store raw and processed datasets, and these are tracked with DVC. We also used the models/ folder to save trained model files and the tests/ folder to add unit tests for our main pipeline. Compared to the original template, we added a configs/ folder to manage hyperparameters and cloud settings, and a docker/ folder for Dockerfiles and deployment scripts.  
+> Answer:Our project was initialized using a standard MLOps cookiecutter template.We mainly worked in the src/ folder, where we separated data preprocessing, model training, and evaluation into different scripts to keep the code clean and easy to maintain. The data/ directory is used to store raw and processed datasets, and these are tracked with DVC. We also used the models/ folder to save trained model files and the tests/ folder to add unit tests for our main pipeline. Compared to the original template, we added a configs/ folder to manage hyperparameters and cloud settings, and a docker/ folder for Dockerfiles and deployment scripts.
 --- question 5 fill here ---
 
 ### Question 6
@@ -221,7 +221,7 @@ pip install -e .
 > *In total we have implemented X tests. Primarily we are testing ... and ... as these the most critical parts of our*
 > *application but also ... .*
 >
-> Answer:
+> Answer: In total we have implemented 8 tests (currently 7 pass and 1 is skipped if the local data artifact is missing). Primarily we are testing (1) our data artifacts and preprocessing (dataset format + preprocessing output keys), (2) basic model behavior (import/initialization and the “missing weights” case), and (3) our FastAPI service (the /health and the /predict). These are the most critical parts of our application cause they can determine whether the pipeline run end-to-end and whether inference works correctly.
 
 --- question 7 fill here ---
 
@@ -236,7 +236,10 @@ pip install -e .
 > *The total code coverage of code is X%, which includes all our source code. We are far from 100% coverage of our **
 > *code and even if we were then...*
 >
-> Answer:
+> Answer: The total code coverage of our code is about 67% (measured with
+``` pytest -q --cov=src --cov-report=term-missing tests/ ```
+). We are far from 100% coverage. Even if we were close to 100%, we can't automatically trust the system to be error free. Coverage mainly tells us that a line of code was executed during tests, but it can not guarantee that we tested the right behavior or all edge cases. For example, tests can run through a function without checking outputs carefully, and they may miss cases like unusual inputs, missing files, unexpected API payloads, or differences between local and cloud environments. So we treat coverage as a helpful signal, but we still rely on meaningful assertions, CI checks, and running the real pipeline end-to-end to build confidence.
+
 
 --- question 8 fill here ---
 
@@ -251,7 +254,13 @@ pip install -e .
 > *We made use of both branches and PRs in our project. In our group, each member had an branch that they worked on in*
 > *addition to the main branch. To merge code we ...*
 >
-> Answer:
+> Answer: We made use of both branches and pull requests (PRs) in our project. In our group, we created a separate branch whenever we worked on a specific task (for example CI setup, pre-commit hooks, or new workflows) instead of committing directly to main. After finishing the work, we pushed the branch to GitHub and opened a PR to merge it into main. This helped us review changes more clearly, discuss fixes if something looked wrong, and keep main stable. We also benefited from GitHub Actions running tests/linting on PRs, so we could catch issues before merging.
+We use these kind of commands to push:
+```
+git checkout -b m17-ci-matrix
+git push -u origin m17-ci-matrix
+# then open a PR on GitHub and merge into main
+```
 
 --- question 9 fill here ---
 
@@ -283,8 +292,10 @@ pip install -e .
 > *and one for running ... . In particular for our ..., we used ... .An example of a triggered workflow can be seen*
 > *here: <weblink>*
 >
-> Answer:We have organized our continuous integration into two main workflow checks in GitHub Actions: one for code linting and one for unit testing. Both workflows are triggered automatically on every push. For code linting, we use flake8 running on the Ubuntu operating system with Python 3.11 to ensure that all code follows PEP 8 style guidelines. To speed up the process, we use pip caching so dependencies do not need to be reinstalled every time.
-The unit testing workflow is the most important part of our CI setup. It runs our test suite using pytest and also generates a code coverage report in the same step. These tests check that the T5 model initializes correctly, that the tokenized datasets are loaded with the expected shapes, and that the model’s forward pass produces a valid loss value as a PyTorch tensor (not NaN). This setup ensures that any changes to the training or data pipeline are automatically tested and verified before deployment.
+> Answer: For unit testing, we run pytest and generate coverage in the same workflow (pytest-cov). To catch environment-related issues early, we run a small matrix setup: Ubuntu + Windows, and Python 3.10 + 3.11. Our tests cover the important parts of the project: data/preprocessing utilities, basic model code behavior, and our FastAPI endpoints (/health and /predict). This way, if a change breaks something (even slightly), it shows up quickly in CI instead of later during deployment or report writing.
+
+Besides the “normal” CI, we also added two lightweight workflows (M19): one triggers when data-related files change, and one triggers when model-registry / model-related files change. The goal is to make sure that updates to data or models don’t slip through without checks.
+
 Link to GitHub Actions: https://github.com/Victor-Wei1001/mlops_project/actions
 
 --- question 11 fill here ---
@@ -305,7 +316,7 @@ Link to GitHub Actions: https://github.com/Victor-Wei1001/mlops_project/actions
 > *We used a simple argparser, that worked in the following way: Python  my_script.py --lr 1e-3 --batch_size 25*
 >
 > Answer: In our project, we manage hyperparameters using a simple command-line interface built with argparse. Default values for parameters such as learning rate, batch size, and number of epochs are defined in src/models/train_model.py, but they can be easily changed when running the script. All chosen parameters are automatically logged by PyTorch Lightning's WandbLogger, so each experiment and its configuration are saved in Weights & Biases for easy comparison.
-That worked in the following way:     
+That worked in the following way:
 ```
 python src/models/train_model.py --lr 2e-5 --batch_size 16 --epochs 10
 ```
@@ -339,7 +350,7 @@ Furthermore, we use Docker to containerize our entire environment (Python 3.11 a
 > Example:
 > *As seen in the first image when have tracked ... and ... which both inform us about ... in our experiments.*
 > *As seen in the second image we are also tracking ... and ...*
- 
+
 > Answer:As seen in the first image, we tracked the train_loss during the model training process on GCP. The curve shows a significant drop from 0.7 to below 0.1, indicating that the T5 model successfully converged and learned the translation patterns.
 
 ![Training loss](figures/train_loss.png)
@@ -485,6 +496,7 @@ We did manage to write an API for our model using FastAPI. The API exposes the t
 
 The API attempts to load the fine-tuned model weights produced during training and falls back to the base T5 model if the weights are unavailable. We used Pydantic models to define request and response schemas, ensuring clear input validation. Additionally, CORS support was enabled so the API could be accessed from a browser-based frontend, allowing interactive use of the translation model.
 
+--- question 23 fill here ---
 
 ### Question 24
 
@@ -512,9 +524,11 @@ curl -X POST http://127.0.0.1:8000/predict \
   -d '{"text": "I love studying in Denmark, but winter is challenging."}'
 ```
 
-This returns a JSON response containing the translated text. 
+This returns a JSON response containing the translated text.
 
 We did not deploy the API to a cloud service due to time and cost constraints, but the FastAPI and Docker-based setup makes it straightforward to extend the deployment to a managed cloud environment.
+
+--- question 24 fill here ---
 
 ### Question 25
 
@@ -533,15 +547,16 @@ We performed both unit testing and load testing for our FastAPI-based inference 
 
 Unit testing was implemented using pytest together with FastAPI TestClient, covering the `/health` and `/predict` endpoints to ensure correct responses and output structure.
 
-For load testing, we executed a lightweight Python-based load test script that repeatedly sent POST requests to the `/predict` endpoint. The performance results (latency statistics and total number of requests) are shown as follow. 
+For load testing, we executed a lightweight Python-based load test script that repeatedly sent POST requests to the `/predict` endpoint. The performance results (latency statistics and total number of requests) are shown as follow.
 ```
 Total requests: 20 \
 Average latency: 1.474 seconds \
-Min latency: 1.294 seconds \    
-Max latency: 1.934 seconds    
+Min latency: 1.294 seconds \
+Max latency: 1.934 seconds
 ```
 All requests completed successfully without failures, demonstrating that the API remains stable under concurrent usage.
 
+--- question 25 fill here ---
 
 ### Question 26
 
@@ -580,7 +595,7 @@ maintain translation quality.
 > *costing the most was ... due to ... . Working in the cloud was ...*
 >
 > Answer:Group member 1 used approximately kr. 3.51 in GCP credits .The service costing the most was Artifact Registry (kr. 3.41) due to storing Docker images for the T5 model,followed by minor costs for Cloud Build (kr. 0.09) and Cloud Storage (kr. 0.01).
- 
+
 
 --- question 27 fill here ---
 
@@ -615,7 +630,10 @@ We additionally implemented a frontend for the FastAPI inference service, allowi
 > *The starting point of the diagram is our local setup, where we integrated ... and ... and ... into our code.*
 > *Whenever we commit code and push to GitHub, it auto triggers ... and ... . From there the diagram shows ...*
 >
-> Answer:
+> Answer: The figure shows our end-to-end MLOps setup from local development to cloud training and serving. We start on a local machine where we develop the code, run unit tests, and build Docker images for reproducibility. Before pushing changes, we use pre-commit hooks (e.g., formatting and linting) to catch common issues early.
+
+When we push code to GitHub and open pull requests, GitHub Actions automatically runs our CI workflows. This includes linting (flake8) and unit tests (pytest) with a matrix over multiple operating systems and Python versions, plus caching to speed up repeated runs. This helps keep the main branch stable and prevents broken code from being merged.
+
 
 --- question 29 fill here ---
 
@@ -652,6 +670,10 @@ We additionally implemented a frontend for the FastAPI inference service, allowi
 
  Student s232898 contributed to the development of the project's machine learning pipeline by working on the T5-based translation model and implementing data processing scripts for the English-to-Chinese translation task. He helped set up the training workflow using PyTorch Lightning and developed scripts for data loading and preprocessing to support effective model training. In addition, he worked on the project infrastructure, including building Docker containers for training and inference, using DVC to manage dataset versioning on Google Cloud Storage, and configuring parts of the Google Cloud Build pipeline. He also integrated Weights & Biases to enable monitoring of training loss and system metrics during experiments.
 
- Student s240195 contributed primarily to the deployment-facing and analysis components of the project. She implemented the FastAPI-based inference service for the trained translation model, enabling local serving of the full inference pipeline and developed a simple frontend interface. In addition, she wrote API-level tests and integrated these tests into the existing continuous integration pipeline. She also performed load testing of the API using a lightweight HTTP client to measure latency under repeated requests. Furthermore, she performed an offline robustness and data drift analysis to evaluate how the model behaves under different prompt formats and input distributions, and instrumented the API with structured logging and basic system-level runtime metrics to support observability. 
+ Student s240195 contributed primarily to the deployment-facing and analysis components of the project. She implemented the FastAPI-based inference service for the trained translation model, enabling local serving of the full inference pipeline and developed a simple frontend interface. In addition, she wrote API-level tests and integrated these tests into the existing continuous integration pipeline. She also performed load testing of the API using a lightweight HTTP client to measure latency under repeated requests. Furthermore, she performed an offline robustness and data drift analysis to evaluate how the model behaves under different prompt formats and input distributions, and instrumented the API with structured logging and basic system-level runtime metrics to support observability.
+
+Student s242649 contributed mainly to testing, CI, and code quality. She added and improved unit tests (covering data/model/API parts) and reran coverage with pytest-cov to track progress. She also set up and debugged our GitHub Actions workflows: fixed YAML/merge conflicts, added multi-OS and multi-Python matrix testing, enabled caching, and resolved CI failures caused by missing dependencies (e.g., adding httpx in dev requirements). In addition, she introduced pre-commit hooks (flake8, formatting, YAML checks, end-of-file fixes) and cleaned up style issues so the repo passes checks before merging.
 
  We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.
+
+--- question 31 fill here ---
