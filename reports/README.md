@@ -61,11 +61,11 @@ will check the repositories and the code to verify your answers.
 * [x] Construct one or multiple docker files for your code (M10)
 * [x] Build the docker files locally and make sure they work as intended (M10)
 * [x] Write one or multiple configurations files for your experiments (M11)
-* [ ] Used Hydra to load the configurations and manage your hyperparameters (M11)
-* [ ] Use profiling to optimize your code (M12)
+* [x] Used Hydra to load the configurations and manage your hyperparameters (M11)
+* [x] Use profiling to optimize your code (M12)
 * [x] Use logging to log important events in your code (M14)
 * [x] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
-* [ ] Consider running a hyperparameter optimization sweep (M14)
+* [x] Consider running a hyperparameter optimization sweep (M14)
 * [x] Use PyTorch-lightning (if applicable) to reduce the amount of boilerplate in your code (M15)
 
 ### Week 2
@@ -116,7 +116,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer: 64
 
---- question 1 fill here ---
+
 
 ### Question 2
 > **Enter the study number for each member in the group**
@@ -127,7 +127,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:s232898, s240195, s242649
 
---- question 2 fill here ---
+
 
 ### Question 3
 > **A requirement to the project is that you include a third-party package not covered in the course. What framework**
@@ -141,7 +141,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:We used the HuggingFace transformers library to make our project easier and more efficient. By loading the pre-trained t5-small model with T5ForConditionalGeneration, we could build an English-to-Chinese translation model using transfer learning, which saved time and computing resources. The T5Tokenizer helped us handle English and Chinese text automatically, including sub-word tokenization and vocabulary mapping, without extra implementation effort.
 
---- question 3 fill here ---
+
 
 ## Coding environment
 
@@ -173,8 +173,8 @@ dvc pull
 pip install -e .
 ```
 
+This setup ensures that every team member works within a unified environment, minimizing bugs caused by library version mismatches.
 
---- question 4 fill here ---
 
 ### Question 5
 
@@ -188,8 +188,8 @@ pip install -e .
 > *because we did not use any ... in our project. We have added an ... folder that contains ... for running our*
 > *experiments.*
 >
-> Answer:Our project was initialized using a standard MLOps cookiecutter template.We mainly worked in the src/ folder, where we separated data preprocessing, model training, and evaluation into different scripts to keep the code clean and easy to maintain. The data/ directory is used to store raw and processed datasets, and these are tracked with DVC. We also used the models/ folder to save trained model files and the tests/ folder to add unit tests for our main pipeline. Compared to the original template, we added a configs/ folder to manage hyperparameters and cloud settings, and a docker/ folder for Dockerfiles and deployment scripts.
---- question 5 fill here ---
+> Answer:Our project was initialized using a standard MLOps cookiecutter template.We mainly worked in the `src/` folder, where we separated data preprocessing, model training, and evaluation into different scripts to keep the code clean and easy to maintain. The `data/` directory is used to store raw and processed datasets, and these are tracked with DVC. We also used the `models/` folder to save trained model files and the `tests/` folder to add unit tests for our main pipeline. Compared to the original template, we added a `configs/` folder to manage hyperparameters and cloud settings, and a `docker/` folder for Dockerfiles and deployment scripts.
+
 
 ### Question 6
 
@@ -202,9 +202,8 @@ pip install -e .
 > *We used ... for linting and ... for formatting. We also used ... for typing and ... for documentation. These*
 > *concepts are important in larger projects because ... . For example, typing ...*
 >
-> Answer:To keep our code clean and easy to maintain, we set up simple but strict rules for code quality. We used flake8 to check that our code follows PEP 8 style guidelines and black to automatically format the code in a consistent way. In our CI/CD pipeline, every pull request runs a flake8 check, and the build fails if there are style problems, so only clean code can be merged.
+> Answer:To keep our code clean and easy to maintain, we set up simple but strict rules for code quality. We used flake8 to check that our code follows PEP 8 style guidelines and black to automatically format the code in a consistent way. In our CI/CD pipeline, every pull request runs a flake8 check, and the build fails if there are style problems, so only clean code can be merged. These practices are essential in larger projects because they reduce technical debt and prevent "code rot" over time. For instance, consistent formatting ensures that team members can quickly read and understand each other's contributions without being distracted by stylistic differences.
 
---- question 6 fill here ---
 
 ## Version control
 
@@ -223,7 +222,6 @@ pip install -e .
 >
 > Answer: In total we have implemented 8 tests (currently 7 pass and 1 is skipped if the local data artifact is missing). Primarily we are testing (1) our data artifacts and preprocessing (dataset format + preprocessing output keys), (2) basic model behavior (import/initialization and the “missing weights” case), and (3) our FastAPI service (the /health and the /predict). These are the most critical parts of our application cause they can determine whether the pipeline run end-to-end and whether inference works correctly.
 
---- question 7 fill here ---
 
 ### Question 8
 
@@ -240,8 +238,6 @@ pip install -e .
 ``` pytest -q --cov=src --cov-report=term-missing tests/ ```
 ). We are far from 100% coverage. Even if we were close to 100%, we can't automatically trust the system to be error free. Coverage mainly tells us that a line of code was executed during tests, but it can not guarantee that we tested the right behavior or all edge cases. For example, tests can run through a function without checking outputs carefully, and they may miss cases like unusual inputs, missing files, unexpected API payloads, or differences between local and cloud environments. So we treat coverage as a helpful signal, but we still rely on meaningful assertions, CI checks, and running the real pipeline end-to-end to build confidence.
 
-
---- question 8 fill here ---
 
 ### Question 9
 
@@ -262,7 +258,6 @@ git push -u origin m17-ci-matrix
 # then open a PR on GitHub and merge into main
 ```
 
---- question 9 fill here ---
 
 ### Question 10
 
@@ -275,9 +270,8 @@ git push -u origin m17-ci-matrix
 > *We did make use of DVC in the following way: ... . In the end it helped us in ... for controlling ... part of our*
 > *pipeline*
 >
-> Answer:We used DVC to manage our English-to-Chinese translation dataset, which mainly consists of preprocessed PyTorch tensor files (train_data.pt). At first, the data was stored locally, but to support team collaboration and cloud training, we uploaded it to Google Cloud Storage (GCS) and set it as our DVC remote. One challenge we faced was authentication in the CI/CD pipeline, where Cloud Build could not pull the data because credentials were missing. We fixed this by using dvc remote modify --local in cloudbuild.yaml to dynamically attach the service account key during the build.
+> Answer:We used DVC to manage our English-to-Chinese translation dataset, which mainly consists of preprocessed PyTorch tensor files (train_data.pt). At first, the data was stored locally, but to support team collaboration and cloud training, we uploaded it to Google Cloud Storage (GCS) and set it as our DVC remote. One challenge we faced was authentication in the CI/CD pipeline, where Cloud Build could not pull the data because credentials were missing. We fixed this by using dvc remote modify --local in cloudbuild.yaml to dynamically attach the service account key during the build. This approach effectively decoupled our large data files from the source code, ensuring that our Git repository remained lightweight while maintaining full traceability of every data version used in our experiments.
 
---- question 10 fill here ---
 
 ### Question 11
 
@@ -298,7 +292,6 @@ Besides the “normal” CI, we also added two lightweight workflows (M19): one 
 
 Link to GitHub Actions: https://github.com/Victor-Wei1001/mlops_project/actions
 
---- question 11 fill here ---
 
 ## Running code and tracking experiments
 
